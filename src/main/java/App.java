@@ -1,5 +1,7 @@
+import org.sql2o.Connection;
 import spark.ModelAndView;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.*;
@@ -29,8 +31,19 @@ public class App {
         post("/send_mail",(request, response) -> {
           Map<String, Object> models = new HashMap<String, Object>();
           String enteredName = request.queryParams("name");
+          String enteredEmail = request.queryParams("email");
+          String enteredComment = request.queryParams("comment");
           request.session().attribute("name", enteredName);
           models.put("name", enteredName);
+          models.put("email", enteredEmail);
+          models.put("comment", enteredComment);
+          try(Connection con = DB.sql2o.open()){
+              String sqlQuery = "INSERT INTO people (email, comment) VALUES (:enteredEmail, :enteredComment);";
+              con.createQuery(sqlQuery)
+                      .addParameter("enteredEmail", enteredEmail)
+                      .addParameter("enteredComment", enteredComment)
+                      .executeUpdate();
+          }
             models.put("templates", "templates/sent_mail.vtl");
             return new ModelAndView(models, "templates/layout.vtl");
         },new VelocityTemplateEngine());
