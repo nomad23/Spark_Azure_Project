@@ -20,6 +20,11 @@ public class App {
             model.put("templates", "templates/index.vtl");
             return new ModelAndView(model, "templates/layout.vtl");
         }, new VelocityTemplateEngine());
+        get("/send_mail",(request, response) -> {
+            Map<String, Object> models = new HashMap<String, Object>();
+            models.put("templates", "templates/send_mail.vtl");
+            return new ModelAndView(models,"templates/layout.vtl");
+        }, new VelocityTemplateEngine());
 
         post("/send_mail",(request, response) -> {
           Map<String, Object> models = new HashMap<String, Object>();
